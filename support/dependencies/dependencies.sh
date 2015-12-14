@@ -96,21 +96,6 @@ if [ -z "$COMPILER" ] ; then
 	exit 1;
 fi;
 
-COMPILER_VERSION=$($COMPILER -v 2>&1 | sed -n '/^gcc version/p' |
-	sed -e 's/^gcc version \([0-9\.]\)/\1/g' -e 's/[-\ ].*//g' -e '1q')
-if [ -z "$COMPILER_VERSION" ] ; then
-	echo
-	echo "You must install 'gcc' on your build machine";
-	exit 1;
-fi;
-COMPILER_MAJOR=$(echo $COMPILER_VERSION | sed -e "s/\..*//g")
-COMPILER_MINOR=$(echo $COMPILER_VERSION | sed -e "s/^$COMPILER_MAJOR\.//g" -e "s/\..*//g")
-if [ $COMPILER_MAJOR -lt 3 -o $COMPILER_MAJOR -eq 2 -a $COMPILER_MINOR -lt 95 ] ; then
-	echo
-	echo "You have gcc '$COMPILER_VERSION' installed.  gcc >= 2.95 is required"
-	exit 1;
-fi;
-
 # check for host CXX
 CXXCOMPILER=$(which $HOSTCXX_NOCCACHE 2> /dev/null)
 if [ -z "$CXXCOMPILER" ] ; then
@@ -127,14 +112,6 @@ if [ ! -z "$CXXCOMPILER" ] ; then
 	if [ -z "$CXXCOMPILER_VERSION" ] ; then
 		echo
 		echo "You may have to install 'g++' on your build machine"
-	fi
-
-	CXXCOMPILER_MAJOR=$(echo $CXXCOMPILER_VERSION | sed -e "s/\..*//g")
-	CXXCOMPILER_MINOR=$(echo $CXXCOMPILER_VERSION | sed -e "s/^$CXXCOMPILER_MAJOR\.//g" -e "s/\..*//g")
-	if [ $CXXCOMPILER_MAJOR -lt 3 -o $CXXCOMPILER_MAJOR -eq 2 -a $CXXCOMPILER_MINOR -lt 95 ] ; then
-		echo
-		echo "You have g++ '$CXXCOMPILER_VERSION' installed.  g++ >= 2.95 is required"
-		exit 1
 	fi
 fi
 
